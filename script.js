@@ -7,6 +7,20 @@ const statusEl = document.getElementById('status');
 const turnLabel = document.getElementById('turnLabel');
 const boardEl = document.getElementById('board');
 
+const PEER_CONFIG = {
+  host: '0.peerjs.com',
+  port: 443,
+  path: '/',
+  secure: true,
+  debug: 1,
+  config: {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+    ],
+  },
+};
+
 let peer;
 let conn;
 let isHost = false;
@@ -21,6 +35,10 @@ const winLines = [
   [0, 3, 6], [1, 4, 7], [2, 5, 8],
   [0, 4, 8], [2, 4, 6],
 ];
+
+function isTelegramInAppBrowser() {
+  return /Telegram|TelegramBot/i.test(navigator.userAgent || '');
+}
 
 function setStatus(text) {
   statusEl.textContent = text;
@@ -109,6 +127,10 @@ function onRemoteMessage(msg) {
     startNewGame(false);
   }
 
+  if (msg.type === 'busy') {
+    setStatus('Комната занята. Создай новую игру.');
+  }
+
   if (msg.type === 'move') {
     board = msg.board;
     currentTurn = msg.currentTurn;
@@ -121,6 +143,15 @@ function onRemoteMessage(msg) {
     startNewGame(false);
     setStatus('Новая партия начата.');
   }
+}
+
+function humanPeerError(err, phase = 'Peer') {
+  const details = [err?.type, err?.message].filter(Boolean).join(': ');
+  let hint = details || 'неизвестная ошибка';
+  if (isTelegramInAppBrowser()) {
+    hint += '. Похоже, это встроенный браузер Telegram — открой ссылку в Chrome/Safari.';
+  }
+  return `${phase}: ${hint}`;
 }
 
 function attachConnection(c) {
@@ -147,14 +178,19 @@ function attachConnection(c) {
   });
 
   conn.on('error', (err) => {
-    setStatus(`Ошибка соединения: ${err.message}`);
+    setStatus(humanPeerError(err, 'Ошибка соединения'));
   });
+}
+
+function newPeerId() {
+  return `ttt-${Math.random().toString(36).slice(2, 10)}-${Date.now().toString(36)}`;
 }
 
 function createHost() {
   isHost = true;
-  peer = new Peer();
   setStatus('Создаю комнату...');
+
+  peer = new Peer(newPeerId(), PEER_CONFIG);
 
   peer.on('open', (id) => {
     const url = new URL(window.location.href);
@@ -174,15 +210,16 @@ function createHost() {
   });
 
   peer.on('error', (err) => {
-    setStatus(`Ошибка Peer: ${err.message}`);
+    setStatus(humanPeerError(err, 'Ошибка Peer'));
   });
 }
 
 function joinRoom(roomId) {
   isHost = false;
   mySymbol = 'O';
-  peer = new Peer();
   setStatus('Подключаюсь к комнате...');
+
+  peer = new Peer(newPeerId(), PEER_CONFIG);
 
   peer.on('open', () => {
     const c = peer.connect(roomId, { reliable: true });
@@ -190,7 +227,7 @@ function joinRoom(roomId) {
   });
 
   peer.on('error', (err) => {
-    setStatus(`Ошибка подключения: ${err.message}`);
+    setStatus(humanPeerError(err, 'Ошибка подключения'));
   });
 }
 
@@ -225,6 +262,10 @@ copyBtn.addEventListener('click', async () => {
 });
 
 renderBoard();
+
+if (isTelegramInAppBrowser()) {
+  setStatus('Открыто во встроенном браузере Telegram. Если не коннектится — открой страницу в Chrome/Safari.');
+}
 
 const params = new URLSearchParams(window.location.search);
 const room = params.get('room');
