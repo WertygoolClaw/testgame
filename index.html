@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic-Tac-Toe Online</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Крестики-нолики онлайн</h1>
+
+      <section class="panel">
+        <div class="row">
+          <button id="hostBtn">Создать игру</button>
+          <button id="joinBtn">Подключиться по ссылке</button>
+          <button id="resetBtn" disabled>Новая партия</button>
+        </div>
+        <div class="row">
+          <input id="inviteLink" type="text" readonly placeholder="Ссылка появится здесь" />
+          <button id="copyBtn" disabled>Копировать</button>
+        </div>
+        <p id="status">Нажми «Создать игру» или открой ссылку-приглашение.</p>
+      </section>
+
+      <section class="game">
+        <div id="board" class="board" aria-label="Игровое поле"></div>
+        <p id="turnLabel">Ожидание подключения второго игрока…</p>
+      </section>
+
+      <details>
+        <summary>Как играть</summary>
+        <ol>
+          <li>Игрок 1 нажимает «Создать игру» и отправляет ссылку другу.</li>
+          <li>Игрок 2 открывает ссылку — подключение произойдет автоматически.</li>
+          <li>Ходы синхронизируются в реальном времени.</li>
+        </ol>
+      </details>
+    </main>
+
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

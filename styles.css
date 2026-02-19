@@ -1,0 +1,101 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #0f1220;
+  color: #eef1ff;
+}
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px 32px;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.panel {
+  background: #181d33;
+  border: 1px solid #2a3156;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+button,
+input {
+  border-radius: 8px;
+  border: 1px solid #33407a;
+  background: #11162b;
+  color: #eef1ff;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#inviteLink {
+  flex: 1;
+  min-width: 220px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 96px);
+  grid-template-rows: repeat(3, 96px);
+  gap: 8px;
+  justify-content: center;
+  margin: 14px 0;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: 700;
+  user-select: none;
+  background: #1b2140;
+  border: 1px solid #33407a;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.cell:hover {
+  background: #242c53;
+}
+
+.cell.disabled {
+  cursor: default;
+}
+
+#status,
+#turnLabel {
+  margin: 8px 0;
+}
+
+.game {
+  background: #181d33;
+  border: 1px solid #2a3156;
+  border-radius: 12px;
+  padding: 12px;
+}
